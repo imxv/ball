@@ -56,7 +56,7 @@ export function transformBallPythonToProduct(pythonProduct: BallPythonProduct) {
   return {
     id: pythonProduct._id,
     title: pythonProduct.title,
-    price: pythonProduct.price / 100, // Convert from cents to dollars
+    price: (pythonProduct.price) * 0.22, 
     image: imageUrl,
     imageHeight: 400, // Default height
     imageWidth: 300,  // Default width

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import WaterfallLayout from "../components/WaterfallLayout";
 import { fetchBallPythons, transformBallPythonToProduct, BallPythonDetail, Store } from "../lib/api";
 
@@ -18,16 +18,53 @@ interface Product {
 }
 
 export default function Home() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  
+  const PRODUCTS_PER_LOAD = 20;
+
+  const loadMoreProducts = useCallback(() => {
+    if (currentIndex >= allProducts.length || loadingMore) return;
+    
+    setLoadingMore(true);
+    
+    // Simulate loading delay
+    setTimeout(() => {
+      const nextIndex = Math.min(currentIndex + PRODUCTS_PER_LOAD, allProducts.length);
+      const newProducts = allProducts.slice(currentIndex, nextIndex);
+      
+      setDisplayedProducts(prev => {
+        // Ensure no duplicates when adding new products
+        const existingIds = new Set(prev.map(p => p.id));
+        const uniqueNewProducts = newProducts.filter(p => !existingIds.has(p.id));
+        return [...prev, ...uniqueNewProducts];
+      });
+      setCurrentIndex(nextIndex);
+      setLoadingMore(false);
+    }, 500);
+  }, [allProducts, currentIndex, loadingMore]);
 
   useEffect(() => {
     async function loadBallPythons() {
       try {
         const apiResponse = await fetchBallPythons();
         const transformedProducts = apiResponse.products.map(transformBallPythonToProduct);
-        setProducts(transformedProducts);
+        
+        // Remove duplicates based on ID
+        const uniqueProducts = transformedProducts.filter((product, index, self) => 
+          index === self.findIndex(p => p.id === product.id)
+        );
+        
+        setAllProducts(uniqueProducts);
+        
+        // Load initial batch
+        const initialProducts = uniqueProducts.slice(0, PRODUCTS_PER_LOAD);
+        setDisplayedProducts(initialProducts);
+        setCurrentIndex(PRODUCTS_PER_LOAD);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load products');
         console.error('Error loading ball pythons:', err);
@@ -38,6 +75,18 @@ export default function Home() {
 
     loadBallPythons();
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop 
+          >= document.documentElement.offsetHeight - 1000) {
+        loadMoreProducts();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loadMoreProducts]);
 
   if (loading) {
     return (
@@ -76,10 +125,23 @@ export default function Home() {
           Discover amazing ball pythons from trusted breeders
         </p>
         <p className="text-center text-sm text-gray-500 dark:text-gray-500 mt-2">
-          {products.length} pythons available
+          Showing {displayedProducts.length} of {allProducts.length} pythons available
         </p>
       </div>
-      <WaterfallLayout products={products} />
+      <WaterfallLayout products={displayedProducts} />
+      
+      {loadingMore && (
+        <div className="flex items-center justify-center py-8">
+          <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-red-600"></div>
+          <span className="ml-2 text-gray-600 dark:text-gray-400">Loading more pythons...</span>
+        </div>
+      )}
+      
+      {currentIndex >= allProducts.length && allProducts.length > 0 && (
+        <div className="text-center py-8">
+          <p className="text-gray-500 dark:text-gray-400">All pythons loaded!</p>
+        </div>
+      )}
     </div>
   );
 }

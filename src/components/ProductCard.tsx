@@ -70,18 +70,12 @@ export default function ProductCard({
           <div className="mb-3 space-y-1">
             <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <span className="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
-              <span>Sex: {detail.sex === 'm' ? 'Male' : detail.sex === 'w' ? 'Female' : 'Unknown'}</span>
+              <span>{detail.sex === 'm' ? '🚹' : detail.sex === 'w' ? '🚺' : 'Unknown'}</span>
             </div>
             {detail.birth && (
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                 <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
-                <span>Born: {new Date(detail.birth).toLocaleDateString()}</span>
-              </div>
-            )}
-            {detail.diet && (
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="inline-block w-2 h-2 bg-orange-500 rounded-full"></span>
-                <span className="line-clamp-1">Diet: {detail.diet}</span>
+                <span>Born: {new Date(detail.birth).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })}</span>
               </div>
             )}
           </div>
@@ -89,7 +83,7 @@ export default function ProductCard({
 
         <div className="flex items-center justify-between mb-2">
           <p className="text-xl font-bold text-red-600 dark:text-red-400">
-            ¥{price.toLocaleString()}
+            ¥{price}
           </p>
           {shippingPrice && (
             <span className="text-xs text-gray-500 dark:text-gray-400">
