@@ -3,6 +3,22 @@
 import React, { useEffect, useState, useCallback } from "react";
 import ProductCard from "./ProductCard";
 
+interface BallPythonDetail {
+  sex: string;
+  birth: string;
+  weight: number | null;
+  diet: string;
+}
+
+interface Store {
+  _id: string;
+  storeName: string;
+  address: {
+    _id: string;
+    province: string;
+  };
+}
+
 interface Product {
   id: string;
   title: string;
@@ -10,6 +26,10 @@ interface Product {
   image: string;
   imageHeight: number;
   imageWidth: number;
+  detail?: BallPythonDetail;
+  store?: Store;
+  shippingPrice?: number | null;
+  category?: string;
 }
 
 interface WaterfallLayoutProps {
@@ -79,6 +99,10 @@ export default function WaterfallLayout({ products }: WaterfallLayoutProps) {
                 image={product.image}
                 imageHeight={product.imageHeight}
                 imageWidth={product.imageWidth}
+                detail={product.detail}
+                store={product.store}
+                shippingPrice={product.shippingPrice}
+                category={product.category}
               />
             ))}
           </div>

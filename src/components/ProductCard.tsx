@@ -1,5 +1,21 @@
 import Image from "next/image";
 
+interface BallPythonDetail {
+  sex: string;
+  birth: string;
+  weight: number | null;
+  diet: string;
+}
+
+interface Store {
+  _id: string;
+  storeName: string;
+  address: {
+    _id: string;
+    province: string;
+  };
+}
+
 interface ProductCardProps {
   id: string;
   title: string;
@@ -7,6 +23,10 @@ interface ProductCardProps {
   image: string;
   imageHeight: number;
   imageWidth: number;
+  detail?: BallPythonDetail;
+  store?: Store;
+  shippingPrice?: number | null;
+  category?: string;
 }
 
 export default function ProductCard({ 
@@ -14,7 +34,11 @@ export default function ProductCard({
   price, 
   image, 
   imageHeight, 
-  imageWidth 
+  imageWidth,
+  detail,
+  store,
+  shippingPrice,
+  category 
 }: ProductCardProps) {
   const aspectRatio = imageHeight / imageWidth;
   const cardWidth = 300; // Fixed card width
@@ -41,9 +65,46 @@ export default function ProductCard({
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2 line-clamp-2">
           {title}
         </h3>
-        <p className="text-xl font-bold text-red-600 dark:text-red-400">
-          ¥{price.toLocaleString()}
-        </p>
+        
+        {detail && (
+          <div className="mb-3 space-y-1">
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <span className="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
+              <span>Sex: {detail.sex === 'm' ? 'Male' : detail.sex === 'w' ? 'Female' : 'Unknown'}</span>
+            </div>
+            {detail.birth && (
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
+                <span>Born: {new Date(detail.birth).toLocaleDateString()}</span>
+              </div>
+            )}
+            {detail.diet && (
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <span className="inline-block w-2 h-2 bg-orange-500 rounded-full"></span>
+                <span className="line-clamp-1">Diet: {detail.diet}</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xl font-bold text-red-600 dark:text-red-400">
+            ¥{price.toLocaleString()}
+          </p>
+          {shippingPrice && (
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              +¥{shippingPrice} shipping
+            </span>
+          )}
+        </div>
+
+        {store && (
+          <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+            <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
+              {store.storeName} • {store.address.province}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
