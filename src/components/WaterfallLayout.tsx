@@ -1,0 +1,89 @@
+"use client";
+
+import React, { useEffect, useState, useCallback } from "react";
+import ProductCard from "./ProductCard";
+
+interface Product {
+  id: string;
+  title: string;
+  price: number;
+  image: string;
+  imageHeight: number;
+  imageWidth: number;
+}
+
+interface WaterfallLayoutProps {
+  products: Product[];
+}
+
+export default function WaterfallLayout({ products }: WaterfallLayoutProps) {
+  const [columns, setColumns] = useState<Product[][]>([]);
+  const [columnCount, setColumnCount] = useState(4);
+
+  const calculateColumns = useCallback(() => {
+    const width = window.innerWidth;
+    let cols = 1;
+    if (width >= 1536) cols = 5; // 2xl
+    else if (width >= 1280) cols = 4; // xl
+    else if (width >= 1024) cols = 3; // lg
+    else if (width >= 640) cols = 2; // sm
+    else cols = 1;
+    
+    setColumnCount(cols);
+  }, []);
+
+  const distributeProducts = useCallback(() => {
+    const newColumns: Product[][] = Array.from({ length: columnCount }, () => []);
+    const columnHeights = Array(columnCount).fill(0);
+
+    products.forEach((product) => {
+      // 计算每个卡片的高度 (图片高度 + 内容区域高度)
+      const cardWidth = 300;
+      const aspectRatio = product.imageHeight / product.imageWidth;
+      const imageHeight = cardWidth * aspectRatio;
+      const contentHeight = 100; // 标题和价格区域的估计高度
+      const totalHeight = imageHeight + contentHeight;
+
+      // 找到最短的列
+      const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+      
+      // 将产品添加到最短的列
+      newColumns[shortestColumnIndex].push(product);
+      columnHeights[shortestColumnIndex] += totalHeight + 16; // 16px 为间距
+    });
+
+    setColumns(newColumns);
+  }, [products, columnCount]);
+
+  useEffect(() => {
+    calculateColumns();
+    window.addEventListener('resize', calculateColumns);
+    return () => window.removeEventListener('resize', calculateColumns);
+  }, [calculateColumns]);
+
+  useEffect(() => {
+    distributeProducts();
+  }, [distributeProducts]);
+
+  return (
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex gap-4 justify-center">
+        {columns.map((column, columnIndex) => (
+          <div key={columnIndex} className="flex flex-col gap-4" style={{ width: '300px' }}>
+            {column.map((product) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                title={product.title}
+                price={product.price}
+                image={product.image}
+                imageHeight={product.imageHeight}
+                imageWidth={product.imageWidth}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
