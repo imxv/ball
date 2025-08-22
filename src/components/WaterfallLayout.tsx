@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import ProductCard from "./ProductCard";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 
 interface BallPythonDetail {
   sex: string;
@@ -34,10 +35,13 @@ interface Product {
 
 interface WaterfallLayoutProps {
   products: Product[];
+  showSkeleton?: boolean;
+  skeletonCount?: number;
 }
 
-export default function WaterfallLayout({ products }: WaterfallLayoutProps) {
+export default function WaterfallLayout({ products, showSkeleton = false, skeletonCount = 12 }: WaterfallLayoutProps) {
   const [columns, setColumns] = useState<Product[][]>([]);
+  const [skeletonColumns, setSkeletonColumns] = useState<number[][]>([]);
   const [columnCount, setColumnCount] = useState(4);
 
   const calculateColumns = useCallback(() => {
@@ -75,6 +79,17 @@ export default function WaterfallLayout({ products }: WaterfallLayoutProps) {
     setColumns(newColumns);
   }, [products, columnCount]);
 
+  const distributeSkeletons = useCallback(() => {
+    const newSkeletonColumns: number[][] = Array.from({ length: columnCount }, () => []);
+    
+    for (let i = 0; i < skeletonCount; i++) {
+      const columnIndex = i % columnCount;
+      newSkeletonColumns[columnIndex].push(i);
+    }
+    
+    setSkeletonColumns(newSkeletonColumns);
+  }, [columnCount, skeletonCount]);
+
   useEffect(() => {
     calculateColumns();
     window.addEventListener('resize', calculateColumns);
@@ -84,6 +99,26 @@ export default function WaterfallLayout({ products }: WaterfallLayoutProps) {
   useEffect(() => {
     distributeProducts();
   }, [distributeProducts]);
+
+  useEffect(() => {
+    distributeSkeletons();
+  }, [distributeSkeletons]);
+
+  if (showSkeleton) {
+    return (
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex gap-4 justify-center">
+          {skeletonColumns.map((column, columnIndex) => (
+            <div key={columnIndex} className="flex flex-col gap-4" style={{ width: '300px' }}>
+              {column.map((skeletonId) => (
+                <ProductCardSkeleton key={skeletonId} />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

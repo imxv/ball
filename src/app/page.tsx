@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import WaterfallLayout from "../components/WaterfallLayout";
 import { fetchBallPythons, transformBallPythonToProduct, BallPythonDetail, Store } from "../lib/api";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Product {
   id: string;
@@ -90,41 +92,50 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading ball pythons...</p>
+      <div className="min-h-screen bg-background py-8">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-center text-foreground mb-2">
+            Ball Python Marketplace
+          </h1>
+          <p className="text-center text-muted-foreground">
+            Discover amazing ball pythons from trusted breeders
+          </p>
+          <p className="text-center text-sm text-muted-foreground mt-2">
+            Loading pythons...
+          </p>
         </div>
+        <WaterfallLayout products={[]} showSkeleton={true} skeletonCount={16} />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 flex items-center justify-center">
+      <div className="min-h-screen bg-background py-8 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 dark:text-red-400">Error: {error}</p>
-          <button 
+          <p className="text-destructive">Error: {error}</p>
+          <Button 
             onClick={() => window.location.reload()} 
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            className="mt-4"
+            variant="destructive"
           >
             Retry
-          </button>
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div className="min-h-screen bg-background py-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-200 mb-2">
+        <h1 className="text-4xl font-bold text-center text-foreground mb-2">
           Ball Python Marketplace
         </h1>
-        <p className="text-center text-gray-600 dark:text-gray-400">
+        <p className="text-center text-muted-foreground">
           Discover amazing ball pythons from trusted breeders
         </p>
-        <p className="text-center text-sm text-gray-500 dark:text-gray-500 mt-2">
+        <p className="text-center text-sm text-muted-foreground mt-2">
           Showing {displayedProducts.length} of {allProducts.length} pythons available
         </p>
       </div>
@@ -132,14 +143,14 @@ export default function Home() {
       
       {loadingMore && (
         <div className="flex items-center justify-center py-8">
-          <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-red-600"></div>
-          <span className="ml-2 text-gray-600 dark:text-gray-400">Loading more pythons...</span>
+          <Spinner size="md" className="text-destructive" />
+          <span className="ml-2 text-muted-foreground">Loading more pythons...</span>
         </div>
       )}
       
       {currentIndex >= allProducts.length && allProducts.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-gray-500 dark:text-gray-400">All pythons loaded!</p>
+          <p className="text-muted-foreground">All pythons loaded!</p>
         </div>
       )}
     </div>

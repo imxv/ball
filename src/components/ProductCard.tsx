@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface BallPythonDetail {
   sex: string;
@@ -45,8 +47,8 @@ export default function ProductCard({
   const calculatedHeight = cardWidth * aspectRatio;
 
   return (
-    <div 
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+    <Card 
+      className="overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
       style={{ width: `${cardWidth}px` }}
     >
       <div 
@@ -61,45 +63,43 @@ export default function ProductCard({
           sizes="300px"
         />
       </div>
-      <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2 line-clamp-2">
+      <CardContent className="p-4">
+        <h3 className="text-lg font-semibold text-card-foreground mb-2 line-clamp-2">
           {title}
         </h3>
         
         {detail && (
-          <div className="mb-3 space-y-1">
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <span className="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
-              <span>{detail.sex === 'm' ? '🚹' : detail.sex === 'w' ? '🚺' : 'Unknown'}</span>
-            </div>
+          <div className="mb-3 flex flex-wrap gap-2">
+            <Badge variant="secondary" className="text-xs">
+              {detail.sex === 'm' ? '🚹 Male' : detail.sex === 'w' ? '🚺 Female' : 'Unknown'}
+            </Badge>
             {detail.birth && (
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
-                <span>Born: {new Date(detail.birth).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })}</span>
-              </div>
+              <Badge variant="outline" className="text-xs">
+                Born: {new Date(detail.birth).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+              </Badge>
             )}
           </div>
         )}
 
         <div className="flex items-center justify-between mb-2">
-          <p className="text-xl font-bold text-red-600 dark:text-red-400">
+          <p className="text-xl font-bold text-destructive">
             ¥{price}
           </p>
           {shippingPrice && (
-            <span className="text-xs text-gray-500 dark:text-gray-400">
+            <span className="text-xs text-muted-foreground">
               +¥{shippingPrice} shipping
             </span>
           )}
         </div>
 
         {store && (
-          <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
-            <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
+          <div className="pt-2 border-t border-border">
+            <p className="text-xs text-muted-foreground line-clamp-1">
               {store.storeName} • {store.address.province}
             </p>
           </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
