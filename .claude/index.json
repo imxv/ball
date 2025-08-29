@@ -1,0 +1,131 @@
+{
+  "projectName": "ball",
+  "lastScanned": "2025-08-29T10:31:16.000Z",
+  "scanStrategy": "adaptive",
+  "projectType": "next.js",
+  "languages": {
+    "typescript": {
+      "files": 5,
+      "percentage": 31.25
+    },
+    "tsx": {
+      "files": 10,
+      "percentage": 62.5
+    },
+    "css": {
+      "files": 1,
+      "percentage": 6.25
+    }
+  },
+  "totalFiles": 16,
+  "scannedFiles": 16,
+  "coveragePercentage": 100,
+  "modules": {
+    "frontend-app": {
+      "path": "src/app",
+      "entryFiles": ["page.tsx", "layout.tsx"],
+      "keyInterfaces": ["Product", "BallPythonDetail", "Store"],
+      "testCoverage": "none",
+      "configFiles": ["globals.css"],
+      "dependencies": ["../components/WaterfallLayout", "../lib/api"],
+      "coverage": 100
+    },
+    "api-service": {
+      "path": "src/app/api",
+      "entryFiles": ["ball-pythons/route.ts"],
+      "keyInterfaces": ["BallPythonApiResponse", "BallPythonProduct"],
+      "testCoverage": "none",
+      "endpoints": ["/api/ball-pythons"],
+      "coverage": 100
+    },
+    "components": {
+      "path": "src/components",
+      "entryFiles": ["WaterfallLayout.tsx", "ProductCard.tsx"],
+      "keyInterfaces": ["WaterfallLayoutProps", "ProductCardProps"],
+      "testCoverage": "none",
+      "uiComponents": ["badge", "button", "card", "skeleton", "spinner"],
+      "coverage": 100
+    },
+    "utils": {
+      "path": "src/lib",
+      "entryFiles": ["api.ts", "utils.ts"],
+      "keyInterfaces": ["BallPythonDetail", "Store", "Category"],
+      "testCoverage": "none",
+      "functions": ["fetchBallPythons", "transformBallPythonToProduct", "cn"],
+      "coverage": 100
+    }
+  },
+  "configFiles": {
+    "package.json": {
+      "scripts": ["dev", "build", "start", "lint"],
+      "framework": "next.js",
+      "version": "15.4.7"
+    },
+    "tsconfig.json": {
+      "strict": true,
+      "pathMapping": {"@/*": ["./src/*"]}
+    },
+    "eslint.config.mjs": {
+      "extends": ["next/core-web-vitals", "next/typescript"]
+    },
+    "components.json": {
+      "uiLibrary": "shadcn/ui",
+      "style": "new-york"
+    }
+  },
+  "gaps": {
+    "testing": {
+      "description": "项目完全缺少测试覆盖",
+      "recommendations": [
+        "添加 Jest + React Testing Library",
+        "创建组件单元测试",
+        "添加API路由集成测试",
+        "实施端到端测试"
+      ]
+    },
+    "documentation": {
+      "description": "缺少开发文档",
+      "recommendations": [
+        "更新 README.md 内容",
+        "添加 API 文档",
+        "创建组件使用说明"
+      ]
+    },
+    "performance": {
+      "description": "性能优化空间",
+      "recommendations": [
+        "添加图片懒加载",
+        "实现虚拟滚动",
+        "添加缓存策略"
+      ]
+    }
+  },
+  "ignoredPatterns": [
+    "/node_modules",
+    "/.pnp",
+    ".pnp.*",
+    ".yarn/*",
+    "/coverage",
+    "/.next/",
+    "/out/",
+    "/build",
+    ".DS_Store",
+    "*.pem",
+    "npm-debug.log*",
+    "yarn-debug.log*",
+    "yarn-error.log*",
+    ".pnpm-debug.log*",
+    ".env*",
+    ".vercel",
+    "*.tsbuildinfo",
+    "next-env.d.ts"
+  ],
+  "nextRecommendations": [
+    "优先补齐测试覆盖，从API路由和工具函数开始",
+    "添加错误边界组件和全局错误处理",
+    "实现图片懒加载优化性能",
+    "考虑添加商品详情页面路由",
+    "集成状态管理工具（如Zustand）处理复杂状态"
+  ],
+  "truncated": false
+}
